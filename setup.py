@@ -53,7 +53,7 @@ class UploadCommand(Command):
 
 
 setup(
-    name='airflow_dbt',
+    name='airflow-dbt-winwin',
     version=about['__version__'],
     packages=find_packages(exclude=['tests']),
     install_requires=['apache-airflow >= 1.10.3'],

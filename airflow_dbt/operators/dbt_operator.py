@@ -3,6 +3,22 @@ from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 
 
+base_template_fields = [
+    "profiles_dir",
+    "target",
+    "dir",
+    "models",
+    "exclude",
+    "select",
+    "selector",
+    "dbt_bin",
+    "verbose",
+    "full_refresh",
+    "data",
+    "schema"
+   
+]
+
 class DbtBaseOperator(BaseOperator):
     """
     Base dbt operator
@@ -36,9 +52,8 @@ class DbtBaseOperator(BaseOperator):
     :type verbose: bool
     """
 
-    ui_color = '#d6522a'
 
-    template_fields = ['env', 'vars']
+    template_fields = base_template_fields
 
     @apply_defaults
     def __init__(self,
