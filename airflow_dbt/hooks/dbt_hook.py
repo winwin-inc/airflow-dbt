@@ -150,7 +150,8 @@ class DbtCliHook(BaseHook):
 
         if sp.returncode:
             raise AirflowException("dbt command failed")
-        
+
+        return line 
 
     def on_kill(self):
         self.log.info('Sending SIGTERM signal to dbt command')    
