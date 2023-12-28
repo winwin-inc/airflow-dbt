@@ -15,7 +15,8 @@ base_template_fields = [
     "verbose",
     "full_refresh",
     "data",
-    "schema"
+    "schema",
+    "vars"
    
 ]
 
