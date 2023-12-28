@@ -141,6 +141,8 @@ class DbtCliHook(BaseHook):
             line = line.decode(self.output_encoding).rstrip()
             self.log.info(line)
         sp.wait()
+
+        self.sp = None
         self.log.info(
             "Command exited with return code %s",
             sp.returncode
@@ -148,7 +150,9 @@ class DbtCliHook(BaseHook):
 
         if sp.returncode:
             raise AirflowException("dbt command failed")
+        
 
     def on_kill(self):
-        self.log.info('Sending SIGTERM signal to dbt command')
-        os.killpg(os.getpgid(self.sp.pid), signal.SIGTERM)
+        self.log.info('Sending SIGTERM signal to dbt command')    
+        if self.sp:
+            os.killpg(os.getpgid(self.sp.pid), signal.SIGTERM)
