@@ -58,6 +58,9 @@ class DbtCliHook(BaseHook):
                  output_encoding='utf-8',
                  verbose=True,
                  warn_error=False):
+        super(DbtCliHook, self).__init__()
+
+
         self.env = env or {}
         self.profiles_dir = profiles_dir
         self.dir = dir
