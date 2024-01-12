@@ -5,6 +5,7 @@ import subprocess
 import json
 from airflow.exceptions import AirflowException
 from airflow.hooks.base_hook import BaseHook
+from airflow.utils.operator_helpers import context_to_airflow_vars
 
 
 class DbtCliHook(BaseHook):
@@ -42,6 +43,7 @@ class DbtCliHook(BaseHook):
     """
 
     def __init__(self,
+                 context = None,
                  env=None,
                  profiles_dir=None,
                  target=None,
@@ -58,10 +60,10 @@ class DbtCliHook(BaseHook):
                  output_encoding='utf-8',
                  verbose=True,
                  warn_error=False):
-        super(DbtCliHook, self).__init__()
+        super().__init__()
 
 
-        self.env = env or {}
+        self.env = self.get_env(context)
         self.profiles_dir = profiles_dir
         self.dir = dir
         self.target = target
@@ -78,6 +80,25 @@ class DbtCliHook(BaseHook):
         self.warn_error = warn_error
         self.output_encoding = output_encoding
 
+    def get_env(self, context):
+        """Build the set of environment variables to be exposed for the bash command."""
+        system_env = os.environ.copy()
+        env = self.env
+        if env is None:
+            env = system_env
+        else:
+            if self.append_env:
+                system_env.update(env)
+                env = system_env
+
+        airflow_context_vars = context_to_airflow_vars(context, in_env_var_format=True)
+        self.log.debug(
+            "Exporting env vars: %s",
+            " ".join(f"{k}={v!r}" for k, v in airflow_context_vars.items()),
+        )
+        env.update(airflow_context_vars)
+        return env
+    
     def _dump_vars(self):
         # The dbt `vars` parameter is defined using YAML. Unfortunately the standard YAML library
         # for Python isn't very good and I couldn't find an easy way to have it formatted
@@ -130,6 +151,7 @@ class DbtCliHook(BaseHook):
         if self.verbose:
             self.log.info(" ".join(dbt_cmd))
 
+        self.log.info(f"subprocess env: {self.env}")
         sp = subprocess.Popen(
             dbt_cmd,
             env=self.env,
@@ -137,6 +159,7 @@ class DbtCliHook(BaseHook):
             stderr=subprocess.STDOUT,
             cwd=self.dir,
             close_fds=True)
+        
         self.sp = sp
         self.log.info("Output:")
         line = ''
