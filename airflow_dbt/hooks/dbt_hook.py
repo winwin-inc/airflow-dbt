@@ -59,11 +59,14 @@ class DbtCliHook(BaseHook):
                  dbt_bin='dbt',
                  output_encoding='utf-8',
                  verbose=True,
-                 warn_error=False):
+                 warn_error=False,
+                 append_env = False
+                 ):
         super().__init__()
 
 
-        self.env = self.get_env(context)
+        self.context = context
+        self.env = env or {} 
         self.profiles_dir = profiles_dir
         self.dir = dir
         self.target = target
@@ -79,11 +82,13 @@ class DbtCliHook(BaseHook):
         self.verbose = verbose
         self.warn_error = warn_error
         self.output_encoding = output_encoding
+        self.append_env = append_env
+        
 
-    def get_env(self, context):
+    def get_env(self, context, env ):
         """Build the set of environment variables to be exposed for the bash command."""
         system_env = os.environ.copy()
-        env = self.env
+         
         if env is None:
             env = system_env
         else:
@@ -97,6 +102,10 @@ class DbtCliHook(BaseHook):
             " ".join(f"{k}={v!r}" for k, v in airflow_context_vars.items()),
         )
         env.update(airflow_context_vars)
+        # for dbt_airflow_macros
+        if "AIRFLOW_CONTEXT_EXECUTION_DATE" in airflow_context_vars: 
+            env["EXECUTION_DATE"] =  airflow_context_vars["AIRFLOW_CONTEXT_EXECUTION_DATE"];
+
         return env
     
     def _dump_vars(self):
@@ -154,7 +163,7 @@ class DbtCliHook(BaseHook):
         self.log.info(f"subprocess env: {self.env}")
         sp = subprocess.Popen(
             dbt_cmd,
-            env=self.env,
+            env=self.get_env(self.context, self.env),
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             cwd=self.dir,

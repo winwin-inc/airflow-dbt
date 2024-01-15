@@ -90,26 +90,27 @@ class DbtBaseOperator(BaseOperator):
         self.dbt_bin = dbt_bin
         self.verbose = verbose
         self.warn_error = warn_error
-        self.create_hook()
+        self.hook = None
 
-
-    def create_hook(self):
-        self.hook = DbtCliHook(
-            env=self.env,
-            profiles_dir=self.profiles_dir,
-            target=self.target,
-            dir=self.dir,
-            vars=self.vars,
-            full_refresh=self.full_refresh,
-            data=self.data,
-            schema=self.schema,
-            models=self.models,
-            exclude=self.exclude,
-            select=self.select,
-            selector=self.selector,
-            dbt_bin=self.dbt_bin,
-            verbose=self.verbose,
-            warn_error=self.warn_error)
+    def create_hook(self, context):
+        if self.hook  is None:
+            self.hook = DbtCliHook(
+                context = context,
+                env=self.env,
+                profiles_dir=self.profiles_dir,
+                target=self.target,
+                dir=self.dir,
+                vars=self.vars,
+                full_refresh=self.full_refresh,
+                data=self.data,
+                schema=self.schema,
+                models=self.models,
+                exclude=self.exclude,
+                select=self.select,
+                selector=self.selector,
+                dbt_bin=self.dbt_bin,
+                verbose=self.verbose,
+                warn_error=self.warn_error)
 
         return self.hook
 
@@ -119,7 +120,7 @@ class DbtRunOperator(DbtBaseOperator):
         super().__init__( *args, **kwargs)
 
     def execute(self, context):
-        self.create_hook().run_cli('run')
+        self.create_hook(context).run_cli('run')
 
 
 class DbtTestOperator(DbtBaseOperator):
@@ -127,7 +128,7 @@ class DbtTestOperator(DbtBaseOperator):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook().run_cli('test')
+        self.create_hook(context).run_cli('test')
 
 
 class DbtDocsGenerateOperator(DbtBaseOperator):
@@ -135,7 +136,7 @@ class DbtDocsGenerateOperator(DbtBaseOperator):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook().run_cli('docs', 'generate')
+        self.create_hook(context).run_cli('docs', 'generate')
 
 
 class DbtSnapshotOperator(DbtBaseOperator):
