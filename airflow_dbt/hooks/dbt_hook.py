@@ -103,8 +103,8 @@ class DbtCliHook(BaseHook):
         )
         env.update(airflow_context_vars)
         # for dbt_airflow_macros
-        if "AIRFLOW_CONTEXT_EXECUTION_DATE" in airflow_context_vars: 
-            env["EXECUTION_DATE"] =  airflow_context_vars["AIRFLOW_CONTEXT_EXECUTION_DATE"];
+        if "AIRFLOW_CTX_EXECUTION_DATE" in airflow_context_vars: 
+            env["EXECUTION_DATE"] =  airflow_context_vars["AIRFLOW_CTX_EXECUTION_DATE"];
 
         return env
     
@@ -159,11 +159,12 @@ class DbtCliHook(BaseHook):
 
         if self.verbose:
             self.log.info(" ".join(dbt_cmd))
-
-        self.log.info(f"subprocess env: {self.env}")
+        
+        sub_env = self.get_env(self.context, self.env)
+        self.log.info(f"subprocess env: {sub_env}")
         sp = subprocess.Popen(
             dbt_cmd,
-            env=self.get_env(self.context, self.env),
+            env=sub_env,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             cwd=self.dir,
