@@ -49,7 +49,7 @@ with DAG(dag_id='dbt', default_args=default_args, schedule_interval='@daily') as
 Install from PyPI:
 
 ```sh
-pip install airflow-dbt
+pip install airflow-dbt-winwin
 ```
 
 It will also need access to the `dbt` CLI, which should either be on your `PATH` or can be set with the `dbt_bin` argument in each operator.
