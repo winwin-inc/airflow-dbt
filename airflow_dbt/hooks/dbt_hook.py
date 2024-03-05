@@ -126,6 +126,10 @@ class DbtCliHook(BaseHook):
 
         if self.profiles_dir is not None:
             dbt_cmd.extend(['--profiles-dir', self.profiles_dir])
+        
+        if self.dir is not None:
+            dbt_cmd.extend(['--project-dir', self.dir])
+
 
         if self.target is not None:
             dbt_cmd.extend(['--target', self.target])
