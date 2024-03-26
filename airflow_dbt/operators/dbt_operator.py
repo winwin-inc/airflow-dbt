@@ -68,7 +68,7 @@ class DbtBaseOperator(BaseOperator):
                  exclude=None,
                  select=None,
                  selector=None,
-                 debug=None,
+                 debug=False,
                  dbt_bin='dbt',
                  verbose=True,
                  warn_error=False,

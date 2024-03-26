@@ -58,7 +58,7 @@ class DbtCliHook(BaseHook):
                  exclude=None,
                  select=None,
                  selector=None,
-                 debug=None,
+                 debug=False,
                  dbt_bin='dbt',
                  output_encoding='utf-8',
                  verbose=True,
@@ -158,6 +158,9 @@ class DbtCliHook(BaseHook):
 
         if self.selector is not None:
             dbt_cmd.extend(['--selector', self.selector])
+        
+        if self.debug:
+            dbt_cmd.extend(['--debug', self.selector])
 
         if self.full_refresh:
             dbt_cmd.extend(['--full-refresh'])
