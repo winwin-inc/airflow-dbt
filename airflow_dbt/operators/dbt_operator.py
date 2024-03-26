@@ -10,6 +10,7 @@ base_template_fields = [
     "exclude",
     "select",
     "selector",
+    "debug",
     "dbt_bin",
     "verbose",
     "full_refresh",
@@ -46,6 +47,8 @@ class DbtBaseOperator(BaseOperator):
     :type select: str
     :param selector: If set, passed as the `--selector` argument to the `dbt` command
     :type selector: str
+    :param debug: If set, passed as the `--debug` argument to the `dbt` command
+    :type debug: str
     :param dbt_bin: The `dbt` CLI. Defaults to `dbt`, so assumes it's on your `PATH`
     :type dbt_bin: str
     :param verbose: The operator will log verbosely to the Airflow logs
@@ -65,6 +68,7 @@ class DbtBaseOperator(BaseOperator):
                  exclude=None,
                  select=None,
                  selector=None,
+                 debug=None,
                  dbt_bin='dbt',
                  verbose=True,
                  warn_error=False,
@@ -87,6 +91,7 @@ class DbtBaseOperator(BaseOperator):
         self.exclude = exclude
         self.select = select
         self.selector = selector
+        self.debug = debug 
         self.dbt_bin = dbt_bin
         self.verbose = verbose
         self.warn_error = warn_error
@@ -108,6 +113,7 @@ class DbtBaseOperator(BaseOperator):
                 exclude=self.exclude,
                 select=self.select,
                 selector=self.selector,
+                debug=self.debug,
                 dbt_bin=self.dbt_bin,
                 verbose=self.verbose,
                 warn_error=self.warn_error)

@@ -34,6 +34,8 @@ class DbtCliHook(BaseHook):
     :type select: str
     :param selector: If set, passed as the `--selector` argument to the `dbt` command
     :type selector: str
+    :param debug: If set, passed as the `--debug` argument to the `dbt` command
+    :type debug: str
     :param dbt_bin: The `dbt` CLI. Defaults to `dbt`, so assumes it's on your `PATH`
     :type dbt_bin: str
     :param output_encoding: Output encoding of bash command. Defaults to utf-8
@@ -56,6 +58,7 @@ class DbtCliHook(BaseHook):
                  exclude=None,
                  select=None,
                  selector=None,
+                 debug=None,
                  dbt_bin='dbt',
                  output_encoding='utf-8',
                  verbose=True,
@@ -78,6 +81,7 @@ class DbtCliHook(BaseHook):
         self.exclude = exclude
         self.select = select
         self.selector = selector
+        self.debug = debug  
         self.dbt_bin = dbt_bin
         self.verbose = verbose
         self.warn_error = warn_error
