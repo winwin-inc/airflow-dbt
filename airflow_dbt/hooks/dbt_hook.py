@@ -126,7 +126,7 @@ class DbtCliHook(BaseHook):
         :type command: str
         """
 
-        dbt_cmd = [self.dbt_bin, *command]
+        dbt_cmd = [self.dbt_bin, '--log-format','json',*command]
 
         if self.profiles_dir is not None:
             dbt_cmd.extend(['--profiles-dir', self.profiles_dir])
@@ -160,7 +160,7 @@ class DbtCliHook(BaseHook):
             dbt_cmd.extend(['--selector', self.selector])
         
         if self.debug:
-            dbt_cmd.extend(['--debug', self.selector])
+            dbt_cmd.extend(['--debug'])
 
         if self.full_refresh:
             dbt_cmd.extend(['--full-refresh'])
@@ -182,11 +182,37 @@ class DbtCliHook(BaseHook):
             close_fds=True)
         
         self.sp = sp
-        self.log.info("Output:")
+        
         line = ''
         for line in iter(sp.stdout.readline, b''):
             line = line.decode(self.output_encoding).rstrip()
-            self.log.info(line)
+            try:
+                json_line = json.loads(line)
+            except json.JSONDecodeError:
+                self.log.error(line.rstrip())
+                pass
+            else:
+                json_info =  json_line["info"]
+                json_data =  json_line["data"]
+                logfunc_map =  {
+                    "debug": self.log.debug,
+                    "info": self.log.info,
+                    "error": self.log.error
+                }
+                log_level = json_info["level"]
+                conn_name = json_data.get("conn_name","")
+
+                 
+                node_path = json_data.get("node_info").get("node_path","")  if json_data.get("node_info") else ''  
+                sql = json_data.get("sql","")
+                msg = json_info.get("msg", line.rstrip())
+                
+                output_msg = f"conn_name: { conn_name },node_path: { node_path } ,sql: {sql}"
+                self.log.debug(output_msg)
+
+                logfunc_map[log_level](msg)
+
+            
         sp.wait()
 
         self.sp = None
