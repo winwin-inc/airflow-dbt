@@ -75,6 +75,7 @@ class DbtBaseOperator(BaseOperator):
                  full_refresh=False,
                  data=False,
                  schema=False,
+                 threads = None,
                  *args,
                  **kwargs):
         super().__init__(*args, **kwargs)
@@ -96,6 +97,7 @@ class DbtBaseOperator(BaseOperator):
         self.verbose = verbose
         self.warn_error = warn_error
         self.hook = None
+        self.threads = threads
 
     def create_hook(self, context):
         if self.hook  is None:

@@ -63,7 +63,8 @@ class DbtCliHook(BaseHook):
                  output_encoding='utf-8',
                  verbose=True,
                  warn_error=False,
-                 append_env = False
+                 append_env = False,
+                 threads = None
                  ):
         super().__init__()
 
@@ -87,6 +88,7 @@ class DbtCliHook(BaseHook):
         self.warn_error = warn_error
         self.output_encoding = output_encoding
         self.append_env = append_env
+        self.threads = threads
         
 
     def get_env(self, context, env ):
@@ -158,15 +160,20 @@ class DbtCliHook(BaseHook):
 
         if self.selector is not None:
             dbt_cmd.extend(['--selector', self.selector])
-        
+
+        if self.threads:
+            dbt_cmd.extend(['--threads', self.threads])
+
         if self.debug:
             dbt_cmd.extend(['--debug'])
 
         if self.full_refresh:
             dbt_cmd.extend(['--full-refresh'])
 
+
         if self.warn_error:
             dbt_cmd.insert(1, '--warn-error')
+
 
         if self.verbose:
             self.log.info(" ".join(dbt_cmd))
