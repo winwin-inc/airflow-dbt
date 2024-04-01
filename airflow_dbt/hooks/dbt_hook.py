@@ -204,7 +204,8 @@ class DbtCliHook(BaseHook):
                 logfunc_map =  {
                     "debug": self.log.debug,
                     "info": self.log.info,
-                    "error": self.log.error
+                    "error": self.log.error,
+                    "warn": self.log.warning
                 }
                 log_level = json_info["level"]
                 conn_name = json_data.get("conn_name","")
@@ -217,7 +218,8 @@ class DbtCliHook(BaseHook):
                 output_msg = f"conn_name: { conn_name },node_path: { node_path } ,sql: {sql}"
                 self.log.debug(output_msg)
 
-                logfunc_map[log_level](msg)
+                if logfunc_map.get(log_level):     
+                    logfunc_map.get(log_level)(msg)
 
             
         sp.wait()
