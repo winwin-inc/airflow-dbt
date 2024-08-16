@@ -3,9 +3,25 @@ import os
 import signal
 import subprocess
 import json
+import re
 from airflow.exceptions import AirflowException
 from airflow.hooks.base_hook import BaseHook
 from airflow.utils.operator_helpers import context_to_airflow_vars
+
+
+
+
+def remove_ansi_escape_codes(text):
+    """
+    移除字符串中的 ANSI 转义码。
+    
+    :param text: 包含 ANSI 转义码的字符串
+    :return: 不包含 ANSI 转义码的字符串
+    """
+    ansi_escape_pattern = r'\x1B[@-_][0-?]*[ -/]*[@-~]'
+    # 使用 re.compile 编译正则表达式以提高效率
+    ansi_escape_re = re.compile(ansi_escape_pattern)
+    return ansi_escape_re.sub('', text)
 
 
 class DbtCliHook(BaseHook):
@@ -213,7 +229,7 @@ class DbtCliHook(BaseHook):
                  
                 node_path = json_data.get("node_info").get("node_path","")  if json_data.get("node_info") else ''  
                 sql = json_data.get("sql","")
-                msg = json_info.get("msg", line.rstrip())
+                msg = remove_ansi_escape_codes(json_info.get("msg", line.rstrip()))
                 
                 output_msg = f"conn_name: { conn_name },node_path: { node_path } ,sql: {sql}"
                 self.log.debug(output_msg)
