@@ -177,3 +177,18 @@ class DbtCleanOperator(DbtBaseOperator):
 
     def execute(self, context):
         self.create_hook(context).run_cli('clean')
+
+class DbtCompileOperator(DbtBaseOperator):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def execute(self, context):
+        self.create_hook(context).run_cli('compile')
+
+
+class DbtCompileOperator(DbtBaseOperator):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def execute(self, context):
+        self.create_hook(context).run_cli('compile')
