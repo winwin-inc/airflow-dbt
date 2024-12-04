@@ -186,9 +186,9 @@ class DbtCompileOperator(DbtBaseOperator):
         self.create_hook(context).run_cli('compile')
 
 
-class DbtCompileOperator(DbtBaseOperator):
+class DbtSourceFreshnessOperator(DbtBaseOperator):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook(context).run_cli('compile')
+        self.create_hook(context).run_cli('source freshness')
