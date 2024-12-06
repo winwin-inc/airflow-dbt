@@ -191,4 +191,4 @@ class DbtSourceFreshnessOperator(DbtBaseOperator):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook(context).run_cli('source freshness')
+        self.create_hook(context).run_cli('source','freshness')
