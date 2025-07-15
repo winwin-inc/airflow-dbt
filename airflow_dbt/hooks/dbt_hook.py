@@ -4,9 +4,11 @@ import signal
 import subprocess
 import json
 import re
+import airflow 
 from airflow.exceptions import AirflowException
-from airflow.hooks.base_hook import BaseHook
-from airflow.utils.operator_helpers import context_to_airflow_vars
+
+from airflow_dbt.version_compat import BaseHook
+#from airflow.utils.operator_helpers import context_to_airflow_vars
 
 
 
