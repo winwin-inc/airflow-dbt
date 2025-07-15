@@ -15,7 +15,7 @@ build:
 
 
 publish:	
-	@uv publish --token $(PYPI_TOKEN)
+	@uv publish 
  
 	
 all: tag build publish
