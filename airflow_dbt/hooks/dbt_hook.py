@@ -7,8 +7,10 @@ import re
 import airflow 
 from airflow.exceptions import AirflowException
 
-from airflow_dbt.version_compat import BaseHook
-#from airflow.utils.operator_helpers import context_to_airflow_vars
+from airflow_dbt.version_compat import (
+    BaseHook,
+    context_to_airflow_vars
+)
 
 
 
@@ -127,9 +129,11 @@ class DbtCliHook(BaseHook):
         )
         env.update(airflow_context_vars)
         # for dbt_airflow_macros
-        if "AIRFLOW_CTX_EXECUTION_DATE" in airflow_context_vars: 
-            env["EXECUTION_DATE"] =  airflow_context_vars["AIRFLOW_CTX_EXECUTION_DATE"];
-
+        for execution_date_var in ["AIRFLOW_CTX_EXECUTION_DATE","AIRFLOW_CTX_LOGICAL_DATE"]:
+            if execution_date_var in airflow_context_vars:
+                env["EXECUTION_DATE"] =  airflow_context_vars[execution_date_var]
+                break
+        
         return env
     
     def _dump_vars(self):

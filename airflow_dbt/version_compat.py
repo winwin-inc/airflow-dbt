@@ -42,7 +42,22 @@ else:
 
 if AIRFLOW_V_3_0_PLUS:
     from airflow.sdk import BaseOperator
+    from airflow.sdk.execution_time.context import (
+        AIRFLOW_VAR_NAME_FORMAT_MAPPING, context_to_airflow_vars
+    )
+    
 else:
     from airflow.models import BaseOperator
+    from airflow.utils.operator_helpers import (  
+        AIRFLOW_VAR_NAME_FORMAT_MAPPING,
+        context_to_airflow_vars,
+    )
 
-__all__ = ["AIRFLOW_V_3_0_PLUS", "AIRFLOW_V_3_1_PLUS", "BaseHook", "BaseOperator"]
+__all__ = [
+    "AIRFLOW_V_3_0_PLUS",
+    "AIRFLOW_V_3_1_PLUS",
+    "BaseHook",
+    "BaseOperator",
+    "AIRFLOW_VAR_NAME_FORMAT_MAPPING",
+    "context_to_airflow_vars",
+]
