@@ -1,4 +1,4 @@
-VERSION = 0.6.0-alpha.3
+VERSION = 0.6.0-alpha.4
 
 version:
 	echo "version = '$(VERSION)'" > airflow_dbt/__version__.py

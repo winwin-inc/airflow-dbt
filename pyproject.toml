@@ -6,8 +6,10 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "apache-airflow-task-sdk<1.2.0,>=1.0.0",
-    "apache-airflow-core>=3.0.0"
+    "apache-airflow-core>=3.0.0",
 ]
+
+
 
 [build-system]
 requires = ["hatchling"]

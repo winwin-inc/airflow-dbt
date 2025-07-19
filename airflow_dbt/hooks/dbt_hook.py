@@ -4,14 +4,11 @@ import signal
 import subprocess
 import json
 import re
-import airflow 
 from airflow.exceptions import AirflowException
 
-from airflow_dbt.version_compat import (
-    BaseHook,
-    context_to_airflow_vars
-)
+from airflow_dbt.version_compat import BaseHook
 
+from airflow.sdk.execution_time.context import context_to_airflow_vars
 
 
 

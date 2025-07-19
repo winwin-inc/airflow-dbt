@@ -3,6 +3,7 @@ from airflow_dbt.hooks.dbt_hook import DbtCliHook
 from airflow_dbt.version_compat import BaseOperator
 
 
+
 base_template_fields = [
     "profiles_dir",
     "target",
