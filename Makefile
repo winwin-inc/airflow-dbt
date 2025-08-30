@@ -11,7 +11,8 @@ tag:
 	git push --tags
 
 build:
-	uv build
+	@rm -rf dist
+	@uv build -o dist
 
 
 publish:	
