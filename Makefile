@@ -1,5 +1,5 @@
 VERSION = 0.6.0-alpha.5
-all: version tag build publish
+
 
 
 version:
@@ -22,4 +22,4 @@ publish:
  
 	
 
-
+all: tag build publish
