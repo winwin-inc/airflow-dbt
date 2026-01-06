@@ -1,7 +1,7 @@
 from airflow_dbt.hooks.dbt_hook import DbtCliHook
-#from airflow.models import BaseOperator
-from airflow_dbt.version_compat import BaseOperator
 
+# from airflow.models import BaseOperator
+from airflow_dbt.version_compat import BaseOperator
 
 
 base_template_fields = [
@@ -18,9 +18,9 @@ base_template_fields = [
     "full_refresh",
     "data",
     "schema",
-    "vars"
-   
+    "vars",
 ]
+
 
 class DbtBaseOperator(BaseOperator):
     """
@@ -57,29 +57,30 @@ class DbtBaseOperator(BaseOperator):
     :type verbose: bool
     """
 
-
     template_fields = base_template_fields
 
-    def __init__(self,
-                 env=None,
-                 profiles_dir=None,
-                 target=None,
-                 dir='.',
-                 vars=None,
-                 models=None,
-                 exclude=None,
-                 select=None,
-                 selector=None,
-                 debug=False,
-                 dbt_bin='dbt',
-                 verbose=True,
-                 warn_error=False,
-                 full_refresh=False,
-                 data=False,
-                 schema=False,
-                 threads = None,
-                 *args,
-                 **kwargs):
+    def __init__(
+        self,
+        env=None,
+        profiles_dir=None,
+        target=None,
+        dir=".",
+        vars=None,
+        models=None,
+        exclude=None,
+        select=None,
+        selector=None,
+        debug=False,
+        dbt_bin="dbt",
+        verbose=True,
+        warn_error=False,
+        full_refresh=False,
+        data=False,
+        schema=False,
+        threads=None,
+        *args,
+        **kwargs,
+    ):
         super().__init__(*args, **kwargs)
 
         self.env = env or {}
@@ -94,7 +95,7 @@ class DbtBaseOperator(BaseOperator):
         self.exclude = exclude
         self.select = select
         self.selector = selector
-        self.debug = debug 
+        self.debug = debug
         self.dbt_bin = dbt_bin
         self.verbose = verbose
         self.warn_error = warn_error
@@ -102,9 +103,9 @@ class DbtBaseOperator(BaseOperator):
         self.threads = threads
 
     def create_hook(self, context):
-        if self.hook  is None:
+        if self.hook is None:
             self.hook = DbtCliHook(
-                context = context,
+                context=context,
                 env=self.env,
                 profiles_dir=self.profiles_dir,
                 target=self.target,
@@ -120,27 +121,30 @@ class DbtBaseOperator(BaseOperator):
                 debug=self.debug,
                 dbt_bin=self.dbt_bin,
                 verbose=self.verbose,
-                warn_error=self.warn_error)
+                warn_error=self.warn_error,
+            )
 
         return self.hook
+
     def on_kill(self):
         if self.hook:
             self.hook.on_kill()
 
+
 class DbtRunOperator(DbtBaseOperator):
     def __init__(self, *args, **kwargs):
-        super().__init__( *args, **kwargs)
-
-    def execute(self, context):
-        self.create_hook(context).run_cli('run')
-
-
-class DbtTestOperator(DbtBaseOperator):
-    def __init__(self,  *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook(context).run_cli('test')
+        self.create_hook(context).run_cli("run")
+
+
+class DbtTestOperator(DbtBaseOperator):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def execute(self, context):
+        self.create_hook(context).run_cli("test")
 
 
 class DbtDocsGenerateOperator(DbtBaseOperator):
@@ -148,7 +152,7 @@ class DbtDocsGenerateOperator(DbtBaseOperator):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook(context).run_cli('docs', 'generate')
+        self.create_hook(context).run_cli("docs", "generate")
 
 
 class DbtSnapshotOperator(DbtBaseOperator):
@@ -156,7 +160,7 @@ class DbtSnapshotOperator(DbtBaseOperator):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook(context).run_cli('snapshot')
+        self.create_hook(context).run_cli("snapshot")
 
 
 class DbtSeedOperator(DbtBaseOperator):
@@ -164,7 +168,7 @@ class DbtSeedOperator(DbtBaseOperator):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook(context).run_cli('seed')
+        self.create_hook(context).run_cli("seed")
 
 
 class DbtDepsOperator(DbtBaseOperator):
@@ -172,7 +176,7 @@ class DbtDepsOperator(DbtBaseOperator):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook(context).run_cli('deps')
+        self.create_hook(context).run_cli("deps")
 
 
 class DbtCleanOperator(DbtBaseOperator):
@@ -180,14 +184,15 @@ class DbtCleanOperator(DbtBaseOperator):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook(context).run_cli('clean')
+        self.create_hook(context).run_cli("clean")
+
 
 class DbtCompileOperator(DbtBaseOperator):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook(context).run_cli('compile')
+        self.create_hook(context).run_cli("compile")
 
 
 class DbtSourceFreshnessOperator(DbtBaseOperator):
@@ -195,4 +200,12 @@ class DbtSourceFreshnessOperator(DbtBaseOperator):
         super().__init__(*args, **kwargs)
 
     def execute(self, context):
-        self.create_hook(context).run_cli('source','freshness')
+        self.create_hook(context).run_cli("source", "freshness")
+
+
+class DbtBuildOperator(DbtBaseOperator):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def execute(self, context):
+        self.create_hook(context).run_cli("build")
