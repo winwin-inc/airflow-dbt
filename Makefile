@@ -1,4 +1,6 @@
-VERSION = 0.6.0-alpha.4
+VERSION = 0.6.0-alpha.5
+all: version tag build publish
+
 
 version:
 	echo "version = '$(VERSION)'" > airflow_dbt/__version__.py
@@ -19,5 +21,5 @@ publish:
 	@uv publish 
  
 	
-all: tag build publish
+
 
