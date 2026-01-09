@@ -126,10 +126,6 @@ class DbtBaseOperator(BaseOperator):
 
         return self.hook
 
-    def on_kill(self):
-        if self.hook:
-            self.hook.on_kill()
-
 
 class DbtRunOperator(DbtBaseOperator):
     def __init__(self, *args, **kwargs):
