@@ -4,5 +4,6 @@ from .dbt_operator import (
     DbtRunOperator,
     DbtTestOperator,
     DbtDocsGenerateOperator,
-    DbtDepsOperator 
+    DbtDepsOperator,
+    DbtBuildOperator,
 )
