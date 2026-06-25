@@ -80,7 +80,7 @@ class DbtCliHook(BaseHook):
                  output_encoding='utf-8',
                  verbose=True,
                  warn_error=False,
-                 append_env = False,
+                 append_env = True,
                  threads = None
                  ):
         super().__init__()
