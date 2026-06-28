@@ -4,7 +4,6 @@ import signal
 import subprocess
 import json
 import re
-from copy import deepcopy
 from airflow.exceptions import AirflowException
 
 from airflow_dbt.version_compat import BaseHook
@@ -12,12 +11,6 @@ from airflow_dbt.version_compat import BaseHook
 from airflow.sdk.execution_time.context import context_to_airflow_vars
 
 
-# 常量抽离，便于维护
-DATE_ENV_CANDIDATES = [
-    "AIRFLOW_CTX_EXECUTION_DATE",
-    "AIRFLOW_CTX_LOGICAL_DATE"
-]
-DBT_EXEC_DATE_KEY = "EXECUTION_DATE"
 
 def remove_ansi_escape_codes(text):
     """
@@ -115,31 +108,30 @@ class DbtCliHook(BaseHook):
         self.threads = threads
         
 
-    def get_env(self, context, env):
+    def get_env(self, context, env ):
         """Build the set of environment variables to be exposed for the bash command."""
-        # 复制系统环境，避免污染全局 os.environ
-        final_env = os.environ.copy()
+        system_env = os.environ.copy()
+         
+        if env is None:
+            env = system_env
+        else:
+            if self.append_env:
+                system_env.update(env)
+                env = system_env
 
-        # 处理用户自定义环境变量
-        if env is not None:
-            # 不追加：完全使用用户环境，深拷贝隔离外部引用
-            final_env = deepcopy(env)
-
-        # 注入Airflow上下文环境变量（优先级最高，覆盖同名key）
         airflow_context_vars = context_to_airflow_vars(context, in_env_var_format=True)
         self.log.debug(
-            "Exporting airflow context env vars: %s",
+            "Exporting env vars: %s",
             " ".join(f"{k}={v!r}" for k, v in airflow_context_vars.items()),
         )
-        final_env.update(airflow_context_vars)
-
-        # 兼容dbt-airflow EXECUTION_DATE
-        for date_key in DATE_ENV_CANDIDATES:
-            if date_key in airflow_context_vars:
-                final_env[DBT_EXEC_DATE_KEY] = airflow_context_vars[date_key]
+        env.update(airflow_context_vars)
+        # for dbt_airflow_macros
+        for execution_date_var in ["AIRFLOW_CTX_EXECUTION_DATE","AIRFLOW_CTX_LOGICAL_DATE"]:
+            if execution_date_var in airflow_context_vars:
+                env["EXECUTION_DATE"] =  airflow_context_vars[execution_date_var]
                 break
-
-        return final_env
+        
+        return env
     
     def _dump_vars(self):
         # The dbt `vars` parameter is defined using YAML. Unfortunately the standard YAML library
